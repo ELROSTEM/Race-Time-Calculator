@@ -172,4 +172,10 @@ if(st.sidebar.button('Generate')):
     except:
         st.sidebar.error("Error") 
 
+st.sidebar.subheader("Author:")
 
+st.sidebar.write("""
+    Ryan Zhang\n
+    ryanzhangofficial@gmail.com
+    rzhang2024@erhsnyc.net
+""")
