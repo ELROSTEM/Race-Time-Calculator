@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import streamlit as st
 
@@ -22,30 +23,26 @@ if uploaded_file is not None:
     dataframe = pd.read_csv(uploaded_file)
     st.write(dataframe)
 
-
-# get difference for time values
-st.write(dataframe)
-
 count_t_vals = dataframe['time'].values
-diffs_t = count_t_vals[:-1] - count_t_vals[1:]
+diffs_t = count_t_vals[:-1] - count_t_vals[1:] 
 
 # get differences for distance values
 count_d_vals = dataframe['displacement'].values
-diffs_d = count_d_vals[:-1] - count_d_vals[1:]
-
+diffs_d = count_d_vals[:-1] - count_d_vals[1:] 
 # create velocity column and calculte it
-dataframe['Velocity'] = ''
-dataframe['Velocity'] = dataframe.loc[diffs_d / diffs_t]
 
+velocity = diffs_d / diffs_t
+dataframe['Velocity']= np.insert(velocity,0,0)
+# calculate difference in velocity
+count_v_vals = dataframe['Velocity'].values
+
+diffs_v = count_v_vals[:-1] - count_v_vals[1:]
+diffs_v=np.round(diffs_v,1)
+
+# calculate accelertaion
+accel= diffs_v / diffs_t
+dataframe['Acceleration']=np.append(accel,0)
 st.write(dataframe)
-
-# # calculate difference in velocity
-# count_v_vals = dataframe['Velocity'].values
-# diffs_v = count_v_vals[:-1] - count_v_vals[1:]
-
-# # calculate accelertaion
-# dataframe['Acceleration'] = dataframe.loc[diffs_v / diffs_t]
-# st.write(dataframe)
 
 
 ###############################################################################
