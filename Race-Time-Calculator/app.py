@@ -48,12 +48,31 @@ drag_data_old = st.sidebar.number_input(
 ###############################################################################
 # Main body
 
-if uploaded_file is not None:
 #------------------------------------------------------------------------------
+#Introduction
+
+introduction = st.empty()
+introduction.title("Roosevelt Racer's Race Time Calculator")
+introduction.header('Welcome')
+introduction.write("""
+Please input your parameters, using the side bar, for calculating the car's race 
+time. The csv file should have 2 columns one for time in sec and the other for di
+stance in m. Do it you monkey. Also I need to figure out what to write here. S
+hould be do like a run down or what we will calculate? or like how to use the app
+or like idk. We will do the explaination inside the calculator no? i think we can just
+make the slide here. Like tranfer the graph thing here. Also why does my header dis
+appear!!!!!""")
+
+if uploaded_file is not None:
+    introduction.empty()
+    st.title("Calculations")
+#------------------------------------------------------------------------------
+
 # Dva calc
     dataframe = pd.read_csv(uploaded_file)
     dataframe = pf.calculate_dva_t(dataframe)
 
+    st.header('DVA')
     dva_col1, dva_col2 = st.columns([3, 1])
     dva_col1.subheader('DVA Chart')
     dva_col1.line_chart(dataframe.rename(columns={'time':'index'}).set_index('index'))
@@ -63,6 +82,13 @@ if uploaded_file is not None:
     dva_expander = st.expander('What did we do?')
     dva_expander.write("We did these calculation:")
     dva_expander.image("https://static.streamlit.io/examples/dice.jpg")
+
+#------------------------------------------------------------------------------
+
+#Fnet Calc
+    fnet = pf.calculate_fnet(dataframe, friction_data_old, mass_data_old, drag_data_old)
+
+
 
 #------------------------------------------------------------------------------
 # Metric
