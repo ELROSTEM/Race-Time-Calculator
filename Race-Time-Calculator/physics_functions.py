@@ -7,33 +7,36 @@ import pandas as pd
 
 ###############################################################################
 
-#Velocity
+#d-t, v-t, a-t calculator
+def calculate_dva_t(dataframe):
+    """This function calculates the v-t and a-t using the d-t table"""
+    # get differences for time values
+    count_t_vals = dataframe['time'].values
+    diffs_t = count_t_vals[:-1] - count_t_vals[1:] 
 
-def velocity_calc(time1, time2, displacement1, displacement2):
-    """Rename the functions if you want Val idk what to name these buy
-    they are just a template. I think this function would take in these 
-    parameters then we would jsut while loop it through the whole csv but let me
-    know how you think we should do it. None is just a stand in"""
-    return None
+    # get differences for displacement values
+    count_d_vals = dataframe['displacement'].values
+    diffs_d = count_d_vals[:-1] - count_d_vals[1:] 
 
-def velocity_graph(velocity_data):
-    """We wound want a graph so I can display the things we calculated. Business0
-    people Like graphs and things that look complicated."""
-    return None
+    # create velocity column and calculte it
+    velocity = diffs_d / diffs_t
+    dataframe['velocity']= np.insert(velocity,0,0)
 
+    # calculate difference in velocity
+    count_v_vals = dataframe['velocity'].values
+    diffs_v = count_v_vals[:-1] - count_v_vals[1:]
+    diffs_v=np.round(diffs_v,1)
+
+    # calculate accelertaion
+    accel= diffs_v / diffs_t
+    dataframe['acceleration']=np.append(accel,0)
+    return dataframe
 
 
 ###############################################################################
 
-#Acceleration
-
-def aceleration_calc():
-    """^ Thats not how you spell"""
+#Fnet Calculator
+def calculate_fnet(dataframe, friction, mass, drag):
     return None
-
-def acceleration_graph():
-    """stuff"""
-    return None
-
 
 ###############################################################################
