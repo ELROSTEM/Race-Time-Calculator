@@ -18,37 +18,37 @@ st.set_page_config(
 #Header
 st.sidebar.header('Race Time Calculator')
 
-#------------------------------------------------------------------------------
-#D-t V-t A-t inputs or DVA inputs
+#---------------------------------------
+#File upload
 
-help_dva = """Please upload a CSV File that has your time and distance measurem
+help_input_csv = """Please upload a CSV File that has your time and distance measurem
 ents"""
 
 #Upload CSV File
 uploaded_file = st.sidebar.file_uploader(
-    label='Upload Race Time Data', help=help_dva)
+    label='Upload Race Time Data', help=help_input_csv)
 
-#------------------------------------------------------------------------------
-#Fnet inputs
+#---------------------------------------
+#Given inputs
 
-help_fnet = """Please input your old measurements"""
+help_input = """just input stuff dude"""
 
-#Friction data input (old)
-friction_data_old = st.sidebar.number_input(
-    label='Friction Data Old (stff)', help=help_fnet)
+#car_mass
+car_mass = st.sidebar.number_input(
+    label='car_mass', help=help_input)
 
-#Mass data input (old)
-mass_data_old = st.sidebar.number_input(
-    label='Mass Data Old (KG?)', help=help_fnet)
+#friction_u or friction coeffe (subject to change as experiments improve)
+friction_u = st.sidebar.number_input(
+    label='friction_u', help=help_input)
 
-#Drag data input (old)
-drag_data_old = st.sidebar.number_input(
-    label='Drag Data Old (stuff)', help=help_fnet)
+#drag_force (subject to change as experiment improve)
+drag_force = st.sidebar.number_input(
+    label='drag_force', help=help_input)
 
 ###############################################################################
 # Main body
 
-#------------------------------------------------------------------------------
+#---------------------------------------
 #Introduction
 
 introduction = st.empty()
@@ -66,8 +66,8 @@ appear!!!!!""")
 if uploaded_file is not None:
     introduction.empty()
     st.title("Calculations")
-#------------------------------------------------------------------------------
 
+#---------------------------------------
 # Dva calc
     dataframe = pd.read_csv(uploaded_file)
     dataframe = pf.calculate_dva_t(dataframe)
@@ -83,14 +83,8 @@ if uploaded_file is not None:
     dva_expander.write("We did these calculation:")
     dva_expander.image("https://static.streamlit.io/examples/dice.jpg")
 
-#------------------------------------------------------------------------------
 
-#Fnet Calc
-    fnet = pf.calculate_fnet(dataframe, friction_data_old, mass_data_old, drag_data_old)
-
-
-
-#------------------------------------------------------------------------------
+#---------------------------------------
 # Metric
     #I made these values up but obv they would be real in the future
     col1, col2, col3 = st.columns(3)

@@ -5,6 +5,55 @@ import pandas as pd
 # ^Python standard line length
 
 
+
+###############################################################################
+
+#Friciton Force (Ff)
+
+def friction_f(car_mass, co2_mass, friction_u):
+    Ff = (car_mass+co2_mass)/1000*9.81*friction_u
+    return Ff
+
+#---------------------------------------
+
+#Friction Coeffe (u)
+
+def friction_u(friction_u):
+    return friction_u
+
+###############################################################################
+
+#Net force (Fnet)
+def force_net(force, friction_force, drag_force):
+    Fnet = force - friction_force - drag_force
+    return Fnet
+
+###############################################################################
+
+#CO2 Mass [will be added to car mass which is give to us]
+
+def co2_mass(co2_mass):
+    return co2_mass
+
+###############################################################################
+
+#Acceleration (a)
+
+#---------------------------------------
+#Speed Change (delta v)  [Calculated using acceleration]
+
+###############################################################################
+
+#Speed (v)   [Calculated using delta v]
+
+#---------------------------------------
+#distance change (delta d) [calculated using speed]
+
+
+###############################################################################
+
+#distance (d)  [calculated using delta d]
+
 ###############################################################################
 
 #d-t, v-t, a-t calculator
