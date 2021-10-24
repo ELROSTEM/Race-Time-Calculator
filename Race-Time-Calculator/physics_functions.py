@@ -84,8 +84,3 @@ def calculate_dva_t(dataframe):
 
 ###############################################################################
 
-#Fnet Calculator
-def calculate_fnet(dataframe, friction, mass, drag):
-    return None
-
-###############################################################################
