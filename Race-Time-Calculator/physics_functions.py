@@ -10,8 +10,8 @@ import pandas as pd
 
 #Friciton Force (Ff)
 
-def friction_f(car_mass, co2_mass, friction_u):
-    Ff = (car_mass+co2_mass)/1000*9.81*friction_u
+def friction_f(total_mass, friction_u):
+    Ff = total_mass/1000*9.81*friction_u
     return Ff
 
 #---------------------------------------
@@ -61,7 +61,7 @@ def calculate_dva_t(dataframe):
     """This function calculates the v-t and a-t using the d-t table"""
     # get differences for time values
     count_t_vals = dataframe['time'].values
-    diffs_t = count_t_vals[:-1] - count_t_vals[1:] 
+    diffs_t = count_t_vals[:-1] - count_t_vals[1:]
 
     # get differences for displacement values
     count_d_vals = dataframe['displacement'].values

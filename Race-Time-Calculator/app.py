@@ -1,6 +1,8 @@
+import numpy as np
 import pandas as pd
 import streamlit as st
 from streamlit.elements.arrow import Data
+from streamlit.type_util import data_frame_to_bytes
 
 import physics_functions as pf
 
@@ -68,20 +70,50 @@ if uploaded_file is not None:
     st.title("Calculations")
 
 #---------------------------------------
-# Dva calc
+# Calculations
     dataframe = pd.read_csv(uploaded_file)
-    dataframe = pf.calculate_dva_t(dataframe)
 
-    st.header('DVA')
-    dva_col1, dva_col2 = st.columns([3, 1])
-    dva_col1.subheader('DVA Chart')
-    dva_col1.line_chart(dataframe.rename(columns={'time':'index'}).set_index('index'))
-    dva_col2.subheader('DVA DataFrame')
-    dva_col2.write(dataframe)
+    #Get Total Mass
+    dataframe["Total Mass"] = dataframe["CO2 Mass (Mco2)"] + car_mass
+    
+    #Get Friction_u (subject to change cause friction coeffe changes)
+    dataframe["Friction Coeffe (u)"] = friction_u
 
-    dva_expander = st.expander('What did we do?')
-    dva_expander.write("We did these calculation:")
-    dva_expander.image("https://static.streamlit.io/examples/dice.jpg")
+    #Get Friction Force (Ff)
+    dataframe["Friction Force (Ff)"] = pf.friction_f(dataframe["Total Mass"], dataframe["Friction Coeffe (u)"])
+
+    #Get Force net (Fnet)
+    dataframe["Fnet"] = pf.force_net(dataframe["Force (N)"], dataframe["Friction Force (Ff)"], dataframe["Drag (FD)"])
+
+#---------------------------------------
+#dva Calculations
+    #Create DataFrame
+    dva_dataframe = dataframe[["Time (s)", "Total Mass", "Fnet"]]
+
+    #Get rid of negative values in Fnet
+    dva_dataframe_acc = dva_dataframe[dva_dataframe.Fnet > 0]
+
+    
+    # count_t_vals = dva_dataframe['Time (s)'].values
+    # diffs_t = count_t_vals[:-1] - count_t_vals[1:]
+    
+    # dataframe["Time"]= diffs_t
+
+    dva_dataframe_acc
+
+    # dataframe = pf.calculate_dva_t(dataframe)
+
+    # #Usable code template for the graphs
+    # st.header('DVA')
+    # dva_col1, dva_col2 = st.columns([3, 1])
+    # dva_col1.subheader('DVA Chart')
+    # dva_col1.line_chart(dataframe.rename(columns={'time':'index'}).set_index('index'))
+    # dva_col2.subheader('DVA DataFrame')
+    # dva_col2.write(dataframe)
+
+    # dva_expander = st.expander('What did we do?')
+    # dva_expander.write("We did these calculation:")
+    # dva_expander.image("https://static.streamlit.io/examples/dice.jpg")
 
 
 #---------------------------------------
