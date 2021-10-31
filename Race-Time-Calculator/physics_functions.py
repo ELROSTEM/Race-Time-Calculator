@@ -56,6 +56,8 @@ def co2_mass(co2_mass):
 
 ###############################################################################
 
+
+
 #d-t, v-t, a-t calculator
 def calculate_dva_t(dataframe):
     """This function calculates the v-t and a-t using the d-t table"""

@@ -90,16 +90,51 @@ if uploaded_file is not None:
     #Create DataFrame
     dva_dataframe = dataframe[["Time (s)", "Total Mass", "Fnet"]]
 
-    #Get rid of negative values in Fnet
-    dva_dataframe_acc = dva_dataframe[dva_dataframe.Fnet > 0]
+    #Replace all negative with 0
+    dva_dataframe[dva_dataframe < 0] = 0
 
-    
-    # count_t_vals = dva_dataframe['Time (s)'].values
-    # diffs_t = count_t_vals[:-1] - count_t_vals[1:]
-    
-    # dataframe["Time"]= diffs_t
+    # Find where to start
+    for index,row in dva_dataframe.iterrows():
+        if row['Fnet'] > 0:
+            # dva_dataframe = dva_dataframe.drop([index])
+            dva_dataframe = dva_dataframe.iloc[index:]
+            break
+    dva_dataframe = dva_dataframe.reset_index(drop=True)
 
-    dva_dataframe_acc
+    #Find Time in sec
+    sec = []
+    for index, row in dva_dataframe.iterrows():
+        first_row = dva_dataframe.iloc[[0]]
+        sec.append(row['Time (s)'] - first_row['Time (s)'])
+    df = pd.concat(sec).reset_index(drop=True)
+    dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
+    dva_dataframe = dva_dataframe.iloc[: , 1:]
+
+    #Calculate accerlation
+    dva_dataframe['Acceleration (a)'] = (dva_dataframe['Fnet']/dva_dataframe['Total Mass'])*1000
+
+    #Calculate speed change
+    delta_v = []
+    for index, row in dva_dataframe.iterrows():
+        row_above = dva_dataframe.iloc[[index-1]]
+        delta_v.append(row['Time (s)']*(row_above['Acceleration (a)']+row['Acceleration (a)'])/2)
+    df = pd.concat(delta_v).reset_index(drop=True)
+    dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
+    dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Speed Change (delta v)'], axis=1, inplace=False)
+
+    #Caluculate speed
+    ser = pd.Series({0:0}, name='Speed (v)')
+    v = [ser]
+    st.write(v)
+    for index, row in dva_dataframe.iterrows():
+        row_above = dva_dataframe.iloc[[index-1]]
+        v.append(v[-1]+row['Speed Change (delta v)'])
+    del v[0]
+    df = pd.concat(v).reset_index(drop=True)
+    dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
+    dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Speed (v)'], axis=1, inplace=False)
+
+    dva_dataframe
 
     # dataframe = pf.calculate_dva_t(dataframe)
 
