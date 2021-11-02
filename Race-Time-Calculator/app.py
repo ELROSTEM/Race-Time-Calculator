@@ -1,3 +1,5 @@
+from os import name
+
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -44,8 +46,8 @@ friction_u = st.sidebar.number_input(
     label='friction_u', help=help_input)
 
 #drag_force (subject to change as experiment improve)
-drag_force = st.sidebar.number_input(
-    label='drag_force', help=help_input)
+# drag_force = st.sidebar.number_input(
+#     label='drag_force', help=help_input)
 
 ###############################################################################
 # Main body
@@ -90,37 +92,48 @@ if uploaded_file is not None:
     #Create DataFrame
     dva_dataframe = dataframe[["Time (s)", "Total Mass", "Fnet"]]
 
-    #Replace all negative with 0
+    #Replace all negative with 0 (for covinence at this moment)
     dva_dataframe[dva_dataframe < 0] = 0
+
+    #Calculate accerlation
+    dva_dataframe['Acceleration (a)'] = (dva_dataframe['Fnet']/dva_dataframe['Total Mass'])*1000
 
     # Find where to start
     for index,row in dva_dataframe.iterrows():
         if row['Fnet'] > 0:
-            # dva_dataframe = dva_dataframe.drop([index])
+            # row_above = dva_dataframe.iloc[[index-1]]
+            # row_above_diff = 0-row_above['Fnet']
+            # row_diff = 0-row['Fnet']
+            # if abs(row_above_diff) < abs(row_diff):
+            #     dva_dataframe = dva_dataframe.iloc[index-1:]
+            #     break
             dva_dataframe = dva_dataframe.iloc[index:]
             break
     dva_dataframe = dva_dataframe.reset_index(drop=True)
 
-    #Find Time in sec
+    #Find Continuous
     sec = []
     for index, row in dva_dataframe.iterrows():
         first_row = dva_dataframe.iloc[[0]]
         sec.append(row['Time (s)'] - first_row['Time (s)'])
     df = pd.concat(sec).reset_index(drop=True)
     dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
-    dva_dataframe = dva_dataframe.iloc[: , 1:]
-
-    #Calculate accerlation
-    dva_dataframe['Acceleration (a)'] = (dva_dataframe['Fnet']/dva_dataframe['Total Mass'])*1000
+    # dva_dataframe = dva_dataframe.iloc[: , 1:]
+    dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Continuous Time'], axis=1, inplace=False)
 
     #Calculate speed change
+    ser = pd.Series({0:0}, name='Speed Change (delta v)')
     delta_v = []
     for index, row in dva_dataframe.iterrows():
         row_above = dva_dataframe.iloc[[index-1]]
-        delta_v.append(row['Time (s)']*(row_above['Acceleration (a)']+row['Acceleration (a)'])/2)
+        if index == 0:
+            row_above['Acceleration (a)'] = 0
+        delta_v.append((row['Time (s)'] - row_above['Time (s)'])*(row_above['Acceleration (a)']+row['Acceleration (a)'])/2)
+    delta_v[0] = ser
     df = pd.concat(delta_v).reset_index(drop=True)
     dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
     dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Speed Change (delta v)'], axis=1, inplace=False)
+    # dva_dataframe = dva_dataframe[:-1]
 
     #Caluculate speed
     ser = pd.Series({0:0}, name='Speed (v)')
@@ -134,6 +147,33 @@ if uploaded_file is not None:
     dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
     dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Speed (v)'], axis=1, inplace=False)
 
+
+    #Calculate distance change
+    ser = pd.Series({0:0}, name='Distance Change (delta d)')
+    delta_d = []
+    for index, row in dva_dataframe.iterrows():
+        row_above = dva_dataframe.iloc[[index-1]]
+        delta_d.append((row['Time (s)'] - row_above['Time (s)'])*(row_above['Speed (v)']+row['Speed (v)'])/2)
+    delta_d[0] = ser
+    df = pd.concat(delta_d).reset_index(drop=True)
+    dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
+    dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Distance Change (delta d)'], axis=1, inplace=False)
+
+
+    #Caluculate distance
+    ser = pd.Series({0:0}, name='Distance (d)')
+    d = [ser]
+    st.write(d)
+    for index, row in dva_dataframe.iterrows():
+        row_above = dva_dataframe.iloc[[index-1]]
+        d.append(d[-1]+row['Distance Change (delta d)'])
+    del d[0]
+    df = pd.concat(d).reset_index(drop=True)
+    dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
+    dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Distance (d)'], axis=1, inplace=False)
+
+
+    #Calculate 
     dva_dataframe
 
     # dataframe = pf.calculate_dva_t(dataframe)
