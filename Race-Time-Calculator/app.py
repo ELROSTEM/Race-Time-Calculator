@@ -56,16 +56,27 @@ friction_u = st.sidebar.number_input(
 #Introduction
 
 introduction = st.empty()
-introduction.title("Roosevelt Racer's Race Time Calculator")
-introduction.header('Welcome')
-introduction.write("""
-Please input your parameters, using the side bar, for calculating the car's race 
-time. The csv file should have 2 columns one for time in sec and the other for di
-stance in m. Do it you monkey. Also I need to figure out what to write here. S
-hould be do like a run down or what we will calculate? or like how to use the app
-or like idk. We will do the explaination inside the calculator no? i think we can just
-make the slide here. Like tranfer the graph thing here. Also why does my header dis
-appear!!!!!""")
+with introduction.container():
+    st.title("Roosevelt Racer's Race Time Calculator")
+    st.header("Welcome")
+    st.write("""
+        This is the Roosevelts Racer's Race Time Calculator created by the
+        team's R&D team. The goal of the R&D team is to improve and
+        accelerate the proccess of creating our dragster. The purpose of the
+        race time calculator is the evaluate if a dragster model is worthy 
+        enough to be manufactured.""")
+
+    st.header("How To Use")
+    st.write("""
+        To use this calculator you must have a csv to input. The csv should
+        have stuff in it. An example input csv can be downloaded below.
+    """)
+    st.download_button(
+        label="Example CSV",
+        data='experimental_data',
+        file_name='large_df.csv',
+        mime='text/csv',)
+
 
 if uploaded_file is not None:
     introduction.empty()
@@ -138,7 +149,6 @@ if uploaded_file is not None:
     #Caluculate speed
     ser = pd.Series({0:0}, name='Speed (v)')
     v = [ser]
-    st.write(v)
     for index, row in dva_dataframe.iterrows():
         row_above = dva_dataframe.iloc[[index-1]]
         v.append(v[-1]+row['Speed Change (delta v)'])
@@ -163,7 +173,6 @@ if uploaded_file is not None:
     #Caluculate distance
     ser = pd.Series({0:0}, name='Distance (d)')
     d = [ser]
-    st.write(d)
     for index, row in dva_dataframe.iterrows():
         row_above = dva_dataframe.iloc[[index-1]]
         d.append(d[-1]+row['Distance Change (delta d)'])
@@ -173,31 +182,103 @@ if uploaded_file is not None:
     dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Distance (d)'], axis=1, inplace=False)
 
 
-    #Calculate 
+    #DVA Columns Only 
+    dva_dataframe = dva_dataframe[['Continuous Time', 'Acceleration (a)', 'Speed (v)', 'Distance (d)']]
+    #Calculating End Time
+    dva_dataframe = dva_dataframe[dva_dataframe['Distance (d)'] <= 20]  
+
+
+    #Acceleration Graph
+    acc_dataframe = dva_dataframe[['Continuous Time', 'Acceleration (a)']]
+    st.header('Acceleration Over Time')
+    acc_col1, acc_col2 = st.columns([3, 1])
+    acc_col1.subheader('Acceleration Over Time Chart')
+    acc_col1.line_chart(acc_dataframe.rename(columns={'Continuous Time':'index'}).set_index('index'))
+    acc_col2.subheader('DVA DataFrame')
+    acc_col2.write(acc_dataframe)
+
+    #Acceleration Expander
+    acc_expander = st.expander('What did we do?')
+    acc_expander.write("We did these calculation:")
+    acc_expander.image("https://static.streamlit.io/examples/dice.jpg")
+    acc_expander.latex(r'''
+    ...     a + ar + a r^2 + a r^3 + \cdots + a r^{n-1} =
+    ...     \sum_{k=0}^{n-1} ar^k =
+    ...     a \left(\frac{1-r^{n}}{1-r}\right)
+    ...     ''')
+
+    #Velocity Graph
+    v_dataframe = dva_dataframe[['Continuous Time', 'Speed (v)']]
+    st.header('Velocity Over Time')
+    v_col1, v_col2 = st.columns([3, 1])
+    v_col1.subheader('Velocity Over Time Chart')
+    v_col1.line_chart(v_dataframe.rename(columns={'Continuous Time':'index'}).set_index('index'))
+    v_col2.subheader('DVA DataFrame')
+    v_col2.write(v_dataframe)
+
+    #Velocity Expander
+    v_expander = st.expander('What did we do?')
+    v_expander.write("We did these calculation:")
+    v_expander.image("https://static.streamlit.io/examples/dice.jpg")
+    v_expander.latex(r'''
+    ...     a + ar + a r^2 + a r^3 + \cdots + a r^{n-1} =
+    ...     \sum_{k=0}^{n-1} ar^k =
+    ...     a \left(\frac{1-r^{n}}{1-r}\right)
+    ...     ''')
+    
+    #Distance Graph
+    d_dataframe = dva_dataframe[['Continuous Time', 'Distance (d)']]
+    st.header('Distance Over Time')
+    d_col1, d_col2 = st.columns([3, 1])
+    d_col1.subheader('Distance Over Time Chart')
+    d_col1.line_chart(d_dataframe.rename(columns={'Continuous Time':'index'}).set_index('index'))
+    d_col2.subheader('DVA DataFrame')
+    d_col2.write(d_dataframe)
+
+    d_expander = st.expander('What did we do?')
+    d_expander.write("We did these calculation:")
+    d_expander.image("https://static.streamlit.io/examples/dice.jpg")
+    d_expander.latex(r'''
+    ...     a + ar + a r^2 + a r^3 + \cdots + a r^{n-1} =
+    ...     \sum_{k=0}^{n-1} ar^k =
+    ...     a \left(\frac{1-r^{n}}{1-r}\right)
+    ...     ''')
+    
+
+
     dva_dataframe
 
-    # dataframe = pf.calculate_dva_t(dataframe)
+    dva_csv = dva_dataframe.to_csv().encode('utf-8')
+    st.download_button(
+        label="Download DVA data as CSV",
+        data=dva_csv,
+        file_name='dva_data.csv',
+        mime='text/csv',)
 
-    # #Usable code template for the graphs
-    # st.header('DVA')
-    # dva_col1, dva_col2 = st.columns([3, 1])
-    # dva_col1.subheader('DVA Chart')
-    # dva_col1.line_chart(dataframe.rename(columns={'time':'index'}).set_index('index'))
-    # dva_col2.subheader('DVA DataFrame')
-    # dva_col2.write(dataframe)
 
-    # dva_expander = st.expander('What did we do?')
-    # dva_expander.write("We did these calculation:")
-    # dva_expander.image("https://static.streamlit.io/examples/dice.jpg")
 
+
+    #Thrust Graph This is wrong reason down below however thrust doesnt need to be graphed cause
+    #its always canstant anyways... this can go in our introduciton
+    # thrust_dataframe = dva_dataframe[['Continuous Time', 'Fnet']]#Fnet is wrong its supposed to be Fn
+    # st.header('Thrust Over Time')
+    # thrust_col1, thrust_col2 = st.columns([3, 1])
+    # thrust_col1.subheader('Thrust Over Time Chart')
+    # thrust_col1.line_chart(thrusttdataframe.rename(columns={'Continuous Time':'index'}).set_index('index'))
+    # thrust_col2.subheader('DVA DataFrame')
+    # thrust_col2.write(acc_dataframe)
 
 #---------------------------------------
 # Metric
+
+    top_speed = (dva_dataframe['Speed (v)'].max())*(18/5)
+    end_time = dva_dataframe['Continuous Time'].values[-1]
+
     #I made these values up but obv they would be real in the future
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Speed", "100 mph", "5 mph")
-    col2.metric("End time", "0.98 sec", "-8%")
-    col3.metric("Efficiency", "86%", "4%")
+    metric_col1, metric_col2, metric_col3 = st.columns(3)
+    metric_col1.metric("Top Speed (km/hr)", round(top_speed, 4), "5 km/hr")
+    metric_col2.metric("End time", round(end_time, 4), "-8%")
+    metric_col3.metric("Efficiency", "86%", "4%")
 
 ###############################################################################
 

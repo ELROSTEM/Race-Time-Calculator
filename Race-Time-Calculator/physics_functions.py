@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from streamlit import cache
 
 ###############################################################################
 # ^Python standard line length
@@ -9,7 +10,7 @@ import pandas as pd
 ###############################################################################
 
 #Friciton Force (Ff)
-
+@cache
 def friction_f(total_mass, friction_u):
     Ff = total_mass/1000*9.81*friction_u
     return Ff
@@ -17,13 +18,14 @@ def friction_f(total_mass, friction_u):
 #---------------------------------------
 
 #Friction Coeffe (u)
-
+@cache
 def friction_u(friction_u):
     return friction_u
 
 ###############################################################################
 
 #Net force (Fnet)
+@cache
 def force_net(force, friction_force, drag_force):
     Fnet = force - friction_force - drag_force
     return Fnet
@@ -31,7 +33,7 @@ def force_net(force, friction_force, drag_force):
 ###############################################################################
 
 #CO2 Mass [will be added to car mass which is give to us]
-
+@cache
 def co2_mass(co2_mass):
     return co2_mass
 
