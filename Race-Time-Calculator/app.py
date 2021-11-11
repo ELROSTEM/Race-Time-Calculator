@@ -6,7 +6,8 @@ import streamlit as st
 from streamlit.elements.arrow import Data
 from streamlit.type_util import data_frame_to_bytes
 
-import physics_functions as pf
+import app_functions as appf
+import calculation_functions as cf
 
 ###############################################################################
 # Initial Page Config
@@ -39,11 +40,15 @@ help_input = """just input stuff dude"""
 
 #car_mass
 car_mass = st.sidebar.number_input(
-    label='car_mass', help=help_input)
+    label='Car Mass', help=help_input)
 
 #friction_u or friction coeffe (subject to change as experiments improve)
 friction_u = st.sidebar.number_input(
     label='friction_u', help=help_input)
+
+start = False
+if car_mass and friction_u != 0:
+    start = True
 
 #drag_force (subject to change as experiment improve)
 # drag_force = st.sidebar.number_input(
@@ -71,14 +76,15 @@ with introduction.container():
         To use this calculator you must have a csv to input. The csv should
         have stuff in it. An example input csv can be downloaded below.
     """)
+
     st.download_button(
         label="Example CSV",
-        data='experimental_data',
-        file_name='large_df.csv',
+        data= appf.example_csv(),
+        file_name='RR_example.csv',
         mime='text/csv',)
 
 
-if uploaded_file is not None:
+if uploaded_file is not None and start == True:
     introduction.empty()
     st.title("Calculations")
 
@@ -86,41 +92,12 @@ if uploaded_file is not None:
 # Calculations
     dataframe = pd.read_csv(uploaded_file)
 
-    #Get Total Mass
-    dataframe["Total Mass"] = dataframe["CO2 Mass (Mco2)"] + car_mass
-    
-    #Get Friction_u (subject to change cause friction coeffe changes)
-    dataframe["Friction Coeffe (u)"] = friction_u
+    #Talkes in all the data and outputs only Time, Total Mass, and Fnet
+    dva_dataframe = cf.dataframe_to_dva(dataframe, car_mass, friction_u)
 
-    #Get Friction Force (Ff)
-    dataframe["Friction Force (Ff)"] = pf.friction_f(dataframe["Total Mass"], dataframe["Friction Coeffe (u)"])
-
-    #Get Force net (Fnet)
-    dataframe["Fnet"] = pf.force_net(dataframe["Force (N)"], dataframe["Friction Force (Ff)"], dataframe["Drag (FD)"])
-
-#---------------------------------------
-#dva Calculations
-    #Create DataFrame
-    dva_dataframe = dataframe[["Time (s)", "Total Mass", "Fnet"]]
-
-    #Replace all negative with 0 (for covinence at this moment)
-    dva_dataframe[dva_dataframe < 0] = 0
 
     #Calculate accerlation
     dva_dataframe['Acceleration (a)'] = (dva_dataframe['Fnet']/dva_dataframe['Total Mass'])*1000
-
-    # Find where to start
-    for index,row in dva_dataframe.iterrows():
-        if row['Fnet'] > 0:
-            # row_above = dva_dataframe.iloc[[index-1]]
-            # row_above_diff = 0-row_above['Fnet']
-            # row_diff = 0-row['Fnet']
-            # if abs(row_above_diff) < abs(row_diff):
-            #     dva_dataframe = dva_dataframe.iloc[index-1:]
-            #     break
-            dva_dataframe = dva_dataframe.iloc[index:]
-            break
-    dva_dataframe = dva_dataframe.reset_index(drop=True)
 
     #Find Continuous
     sec = []
@@ -187,6 +164,8 @@ if uploaded_file is not None:
     #Calculating End Time
     dva_dataframe = dva_dataframe[dva_dataframe['Distance (d)'] <= 20]  
 
+#---------------------------------------
+#Graphs
 
     #Acceleration Graph
     acc_dataframe = dva_dataframe[['Continuous Time', 'Acceleration (a)']]
@@ -255,7 +234,7 @@ if uploaded_file is not None:
         file_name='dva_data.csv',
         mime='text/csv',)
 
-
+    st.balloons()
 
 
     #Thrust Graph This is wrong reason down below however thrust doesnt need to be graphed cause
@@ -279,6 +258,9 @@ if uploaded_file is not None:
     metric_col1.metric("Top Speed (km/hr)", round(top_speed, 4), "5 km/hr")
     metric_col2.metric("End time", round(end_time, 4), "-8%")
     metric_col3.metric("Efficiency", "86%", "4%")
+
+else:
+    st.sidebar.error('Please input all your information including Car Mass and Friction')
 
 ###############################################################################
 
