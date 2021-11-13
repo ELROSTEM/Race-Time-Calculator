@@ -39,9 +39,8 @@ def co2_mass(co2_mass):
 
 ###############################################################################
 
-
-
-@cache
+#Dataframe to Dva Dataframe
+@cache(allow_output_mutation=True)# <-- idk why I need to put this do more research
 def dataframe_to_dva(dataframe, car_mass, friction_u):
     """Returns a dva_dataframe ready for the dva to be calculated. It takes in all the
     data from the inputed CSV file and outputs only Time, total mass, and Fnet over time
@@ -83,22 +82,89 @@ def dataframe_to_dva(dataframe, car_mass, friction_u):
 
     return dva_dataframe
 
+
+###############################################################################
+#Calculate Continuous Time
+@cache
+def find_continuous_time(dva_dataframe):
+    
+    sec = []
+    for index,row in dva_dataframe.iterrows(): # <- index is not being used which makes it waste memory but if remove index variable row is not created
+        first_row = dva_dataframe.iloc[[0]]
+        sec.append(row['Time (s)'] - first_row['Time (s)'])
+    df = pd.concat(sec).reset_index(drop=True)
+    dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
+    # dva_dataframe = dva_dataframe.iloc[: , 1:]
+    dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Continuous Time'], axis=1, inplace=False)
+    return dva_dataframe
+
+###############################################################################
 #Acceleration (a)
 
 #---------------------------------------
 #Speed Change (delta v)  [Calculated using acceleration]
+@cache
+def cal_speed_change(dva_dataframe):
+    ser = pd.Series({0:0}, name='Speed Change (delta v)')
+    delta_v = []
+    for index, row in dva_dataframe.iterrows():
+        row_above = dva_dataframe.iloc[[index-1]]
+        if index == 0:
+            row_above['Acceleration (a)'] = 0
+        delta_v.append((row['Time (s)'] - row_above['Time (s)'])*(row_above['Acceleration (a)']+row['Acceleration (a)'])/2)
+    delta_v[0] = ser
+    df = pd.concat(delta_v).reset_index(drop=True)
+    dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
+    dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Speed Change (delta v)'], axis=1, inplace=False)
+    # dva_dataframe = dva_dataframe[:-1]
+    return dva_dataframe
 
 ###############################################################################
 
 #Speed (v)   [Calculated using delta v]
-
+@cache
+def cal_speed(dva_dataframe):
+    ser = pd.Series({0:0}, name='Speed (v)')
+    v = [ser]
+    for index, row in dva_dataframe.iterrows():
+        row_above = dva_dataframe.iloc[[index-1]]
+        v.append(v[-1]+row['Speed Change (delta v)'])
+    del v[0]
+    df = pd.concat(v).reset_index(drop=True)
+    dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
+    dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Speed (v)'], axis=1, inplace=False)
+    return dva_dataframe
 #---------------------------------------
 #distance change (delta d) [calculated using speed]
-
+@cache
+def cal_distance_change(dva_dataframe):
+    ser = pd.Series({0:0}, name='Distance Change (delta d)')
+    delta_d = []
+    for index, row in dva_dataframe.iterrows():
+        row_above = dva_dataframe.iloc[[index-1]]
+        delta_d.append((row['Time (s)'] - row_above['Time (s)'])*(row_above['Speed (v)']+row['Speed (v)'])/2)
+    delta_d[0] = ser
+    df = pd.concat(delta_d).reset_index(drop=True)
+    dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
+    dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Distance Change (delta d)'], axis=1, inplace=False)
+    return dva_dataframe
 
 ###############################################################################
 
 #distance (d)  [calculated using delta d]
+@cache
+def cal_distance(dva_dataframe):
+    ser = pd.Series({0:0}, name='Distance (d)')
+    d = [ser]
+    for index, row in dva_dataframe.iterrows():
+        row_above = dva_dataframe.iloc[[index-1]]
+        d.append(d[-1]+row['Distance Change (delta d)'])
+    del d[0]
+    df = pd.concat(d).reset_index(drop=True)
+    dva_dataframe = pd.concat([dva_dataframe, df], axis=1)
+    dva_dataframe = dva_dataframe.set_axis([*dva_dataframe.columns[:-1], 'Distance (d)'], axis=1, inplace=False)
+    return dva_dataframe
+
 
 ###############################################################################
 
