@@ -188,7 +188,6 @@ if uploaded_file is not None and start == True:
         file_name='dva_data.csv',
         mime='text/csv',)
 
-    st.balloons()
 
 
     #Thrust Graph This is wrong reason down below however thrust doesnt need to be graphed cause
