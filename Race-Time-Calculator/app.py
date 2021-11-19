@@ -116,6 +116,20 @@ try:
         #Calculating End Time
         dva_dataframe = dva_dataframe[dva_dataframe['Distance (d)'] <= 20]  
 
+#---------------------------------------
+    # Metric
+
+        top_speed = (dva_dataframe['Speed (v)'].max())*(18/5)
+        end_time = dva_dataframe['Continuous Time'].values[-1]
+
+        #I made these values up but obv they would be real in the future
+        metric_col1, metric_col2, metric_col3 = st.columns(3)
+        metric_col1.metric("Top Speed (km/hr)", round(top_speed, 4), "5 km/hr")
+        metric_col2.metric("End time", round(end_time, 4), "-8%")
+        metric_col3.metric("Efficiency", "86%", "4%")
+
+
+
     #---------------------------------------
     #Graphs
 
@@ -202,14 +216,14 @@ try:
     #---------------------------------------
     # Metric
 
-        top_speed = (dva_dataframe['Speed (v)'].max())*(18/5)
-        end_time = dva_dataframe['Continuous Time'].values[-1]
+        # top_speed = (dva_dataframe['Speed (v)'].max())*(18/5)
+        # end_time = dva_dataframe['Continuous Time'].values[-1]
 
-        #I made these values up but obv they would be real in the future
-        metric_col1, metric_col2, metric_col3 = st.columns(3)
-        metric_col1.metric("Top Speed (km/hr)", round(top_speed, 4), "5 km/hr")
-        metric_col2.metric("End time", round(end_time, 4), "-8%")
-        metric_col3.metric("Efficiency", "86%", "4%")
+        # #I made these values up but obv they would be real in the future
+        # metric_col1, metric_col2, metric_col3 = st.columns(3)
+        # metric_col1.metric("Top Speed (km/hr)", round(top_speed, 4), "5 km/hr")
+        # metric_col2.metric("End time", round(end_time, 4), "-8%")
+        # metric_col3.metric("Efficiency", "86%", "4%")
 except:
      st.sidebar.error('Please input all your information including Car Mass and Friction')
 
@@ -218,5 +232,4 @@ except:
 #     st.sidebar.error('Please input all your information including Car Mass and Friction')
 
 
-
-##############################################################################
+###################################################################
