@@ -74,10 +74,9 @@ with introduction.container():
         have stuff in it. An example input csv can be downloaded below.
     """)
 
-    example_csv = appf.FileReference('experimental_data.csv')
     st.download_button(
         label="Example CSV",
-        data= appf.example_csv(example_csv),
+        data= appf.example_csv(),
         file_name='RR_example.csv',
         mime='text/csv',)
 

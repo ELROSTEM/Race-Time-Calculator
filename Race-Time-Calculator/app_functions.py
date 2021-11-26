@@ -5,13 +5,15 @@ from streamlit import cache
 import calculation_functions as cf
 
 
-class FileReference:
-    def __init__(self, filename):
-        self.filename = filename
-
-
 @cache
-def example_csv(example_csv):
+def example_csv():
+    """This calls the example csv file"""
+    example_csv = pd.read_csv('./data/experimental_data.csv')
+    example_csv = example_csv.to_csv().encode('utf-8')
+
+    return example_csv
+
+
     # example_csv = pd.DataFrame(
     #     {'Time (s)':[
     #             7.9917,
@@ -68,10 +70,3 @@ def example_csv(example_csv):
     #         ]
     #     }
     # )
-
-    example_csv = pd.read_csv('experimental_data.csv')
-    
-
-    example_csv = example_csv.to_csv().encode('utf-8')
-
-    return example_csv
