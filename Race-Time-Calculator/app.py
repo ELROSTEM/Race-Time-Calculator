@@ -1,3 +1,4 @@
+import webbrowser
 from os import name, read
 
 import numpy as np
@@ -74,11 +75,9 @@ with introduction.container():
         have stuff in it. An example input csv can be downloaded below.
     """)
 
-    st.download_button(
-        label="Example CSV",
-        data= appf.example_csv(),
-        file_name='RR_example.csv',
-        mime='text/csv',)
+    example_csv = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR4qq-QLuEm08BEz1XF0NVEc-ZuobfiMNupsqFufy3dfEfP-Q59iDVCPDNv2IsuyOiEBqfBiJhu7Ftu/pub?output=csv'
+    if st.button('Example CSV'):
+        webbrowser.open_new_tab(example_csv)
 
 # uploaded_file is not None and
 try:
