@@ -75,9 +75,13 @@ with introduction.container():
         have stuff in it. An example input csv can be downloaded below.
     """)
 
-    example_csv = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR4qq-QLuEm08BEz1XF0NVEc-ZuobfiMNupsqFufy3dfEfP-Q59iDVCPDNv2IsuyOiEBqfBiJhu7Ftu/pub?output=csv'
-    if st.button('Example CSV'):
-        webbrowser.open_new_tab(example_csv)
+
+    example_csv = st.download_button(
+            label="Download Example CSV",
+            data=appf.example_csv(),
+            file_name="RTC_example_data.csv",
+            mime="text/csv"
+        )
 
 # uploaded_file is not None and
 try:
