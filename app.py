@@ -1,4 +1,3 @@
-import webbrowser
 from os import name, read
 
 import numpy as np
@@ -83,7 +82,7 @@ with introduction.container():
             mime="text/csv"
         )
 
-# uploaded_file is not None and
+# uploaded_file is not None
 try:
     if st.sidebar.button("Generate"):
         introduction.empty()
@@ -125,13 +124,10 @@ try:
         top_speed = (dva_dataframe['Speed (v)'].max())*(18/5)
         end_time = dva_dataframe['Continuous Time'].values[-1]
 
-        #I made these values up but obv they would be real in the future
-        metric_col1, metric_col2, metric_col3 = st.columns(3)
-        metric_col1.metric("Top Speed (km/hr)", round(top_speed, 4), "5 km/hr")
-        metric_col2.metric("End time", round(end_time, 4), "-8%")
-        metric_col3.metric("Efficiency", "86%", "4%")
-
-
+        metric_col1, metric_col2 = st.columns(2)
+        metric_col1.metric("Top Speed (km/hr)", round(top_speed, 4))
+        metric_col2.metric("End time", round(end_time, 4))
+        # metric_col3.metric("Efficiency", "86%", "4%")
 
     #---------------------------------------
     #Graphs
@@ -142,7 +138,7 @@ try:
         acc_col1, acc_col2 = st.columns([3, 1])
         acc_col1.subheader('Acceleration Over Time Chart')
         acc_col1.line_chart(acc_dataframe.rename(columns={'Continuous Time':'index'}).set_index('index'))
-        acc_col2.subheader('DVA DataFrame')
+        acc_col2.subheader('Acceleration DataFrame')
         acc_col2.write(acc_dataframe)
 
         #Acceleration Expander
@@ -161,7 +157,7 @@ try:
         v_col1, v_col2 = st.columns([3, 1])
         v_col1.subheader('Velocity Over Time Chart')
         v_col1.line_chart(v_dataframe.rename(columns={'Continuous Time':'index'}).set_index('index'))
-        v_col2.subheader('DVA DataFrame')
+        v_col2.subheader('Velocity DataFrame')
         v_col2.write(v_dataframe)
 
         #Velocity Expander
@@ -180,7 +176,7 @@ try:
         d_col1, d_col2 = st.columns([3, 1])
         d_col1.subheader('Distance Over Time Chart')
         d_col1.line_chart(d_dataframe.rename(columns={'Continuous Time':'index'}).set_index('index'))
-        d_col2.subheader('DVA DataFrame')
+        d_col2.subheader('Distance DataFrame')
         d_col2.write(d_dataframe)
 
         d_expander = st.expander('What did we do?')
@@ -216,23 +212,8 @@ try:
         # thrust_col2.subheader('DVA DataFrame')
         # thrust_col2.write(acc_dataframe)
 
-    #---------------------------------------
-    # Metric
-
-        # top_speed = (dva_dataframe['Speed (v)'].max())*(18/5)
-        # end_time = dva_dataframe['Continuous Time'].values[-1]
-
-        # #I made these values up but obv they would be real in the future
-        # metric_col1, metric_col2, metric_col3 = st.columns(3)
-        # metric_col1.metric("Top Speed (km/hr)", round(top_speed, 4), "5 km/hr")
-        # metric_col2.metric("End time", round(end_time, 4), "-8%")
-        # metric_col3.metric("Efficiency", "86%", "4%")
 except:
      st.sidebar.error('Please input all your information including Car Mass and Friction')
-
-
-# else:
-#     st.sidebar.error('Please input all your information including Car Mass and Friction')
 
 
 ###################################################################
