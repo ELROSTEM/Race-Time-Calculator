@@ -3,6 +3,8 @@
 Race Time Calculator for the F1 in Schools competition.
 Built with: Py 🐍, Streamlit
 
+![Alt Text](https://media.giphy.com/media/SCuZ1vPVJXdi2e95Hc/giphy.gif)
+
 # Who are the Roosevelt Racers (RR)?
 
 We are a dedicated team of students at Eleanor Roosevelt High School participating in this year's U.S. National F1 in Schools competition. As a rookie team in 2017, we placed 1st in New York, 2nd in the New York Super Regionals, and 9th overall nationwide. All members of the Roosevelt Racers have 200+ hours of experience in their specialized fields. This year, we are the only team from New York. If we win or come in second place nationally, we'll advance to the World Finals.
