@@ -16,9 +16,11 @@ This is what it looks like IRL:
 # What is the Race Time Calculator?
 
 The Race Time Calculator, built by RR's R&D team, the purpose of the race time calculator is the evaluate if a dragster model is worthy enough be manufactured. The goal of the R&D team is to improve and accelerate the proccess of creating our dragster and we developed this for the team as an internal software. Our vision is to create products good enough for other teams to use as well.
+
 ![image](https://user-images.githubusercontent.com/65325330/145687502-010de8e2-9607-4480-90bd-4636e97b79c9.png)
 
 # How does it work?
 
+Visit the site to find out 😊
 
 
