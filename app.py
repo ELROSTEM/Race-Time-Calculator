@@ -80,8 +80,6 @@ with introduction.container():
         By using these parameters the calculator will to spit out a race time for
         your car model. This will streamline your manufacturing/development process 
         because you would "know" your car time before even manufacturing! 
-        
-        For further explanation of the calculation process please read the below.
     """)
     
 
@@ -110,11 +108,12 @@ with introduction.container():
     }
     ''')
 
-    st.header("Understanding Thrust")
-    st.write("""
-        Use a Vernier force sensor, microphone, computer interface, a full CO2 cartridge, a rope, a
-         Balsa plank, a race system, a lunch pod, and a laptop to measure the thrust of the CO2 cartridge.
-    """)
+    # st.header("Understanding Thrust")
+    # st.write("""
+    #     We used a Vernier force sensor, microphone, computer interface, a full CO2 cartridge, a rope, a
+    #     Balsa plank, a race system, a lunch pod, and a laptop to measure the thrust of the CO2 cartridge.
+    # """)
+    
 
     # st.markdown("![Alt Text]ehttps://media.giphy.com/media/SCuZ1vPVJXdi2e95Hc/giphy.gif)")
 
@@ -196,10 +195,8 @@ try:
         v_expander = st.expander('What did we do?')
         v_expander.write("We did these calculation:")
         v_expander.latex(r'''
-        ...     a + ar + a r^2 + a r^3 + \cdots + a r^{n-1} =
-        ...     \sum_{k=0}^{n-1} ar^k =
-        ...     a \left(\frac{1-r^{n}}{1-r}\right)
-        ...     ''')
+            v_{n}=\sum_{0}^{n} \frac{\left[a\left(t_{n}\right)+a\left(t_{n+1}\right)\right]}{2} \bullet\left(t_{n+1}-t_{n}\right)
+        ''')
         
         #Distance Graph
         d_dataframe = dva_dataframe[['Continuous Time', 'Distance (d)']]
@@ -213,8 +210,8 @@ try:
         d_expander = st.expander('What did we do?')
         d_expander.write("We did these calculation:")
         d_expander.latex(r'''
+            d_{n}=\sum_{0}^{n} \frac{\left[v\left(t_{n}\right)+v\left(t_{n+1}\right)\right]}{2} \bullet\left(t_{n+1}-t_{n}\right)
         ''')
-        
 
 
         dva_dataframe
